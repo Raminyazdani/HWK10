@@ -3,23 +3,12 @@ import time
 
 logger = logging.getLogger(__name__)
 
-logger.setLevel("DEBUG")
+logger.setLevel("INFO")
 handler = logging.StreamHandler()
-log_format = "%(asctime)s %(levelname)s -- %(message)s"
-formatter = logging.Formatter(log_format)
+logger_string_format = "%(asctime)s -- %(levelname)s --- %(message)s"
+formatter = logging.Formatter(logger_string_format)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
-
-
-def process_timer(func):
-    def inner(n):
-        start = time.time()
-        result = func(n)
-        end = time.time()
-        logger.debug("{} ran in {}s".format(func.__name__, round(end - start, 2)))
-        return result
-
-    return inner
 
 
 def cacher(func):
@@ -31,6 +20,17 @@ def cacher(func):
         else:
             cache[args] = func(*args)
             return cache[args]
+
+    return inner
+
+
+def process_timer(func):
+    def inner(n):
+        start = time.time()
+        result = func(n)
+        end = time.time()
+        logger.debug(f"{func.__name__} ran in {end - start, 2}s")
+        return result
 
     return inner
 
@@ -52,4 +52,4 @@ def factorial(number):
         return number * factorial(number - 1)
 
 
-print(fibonachi(20))
+print(fibonachi(10))
